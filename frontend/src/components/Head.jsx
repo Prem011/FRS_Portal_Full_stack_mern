@@ -35,7 +35,6 @@ const Head = () => {
 
   
   useEffect(() => {
-    // Fetch notifications (mock data for example)
 
     setNotifications([
       // { id: 1, message: 'Friend request from John Doe' },
@@ -115,14 +114,16 @@ const Head = () => {
       onMouseEnter={() => setShowFriendRequests(true)}
       onClick={() => setShowFriendRequests(false)}
     >
-      <FaUserFriends size={40} />
+     <div className='flex gap-2 '  >
+     <FaUserFriends size={40} />
       
       {/* Friend Request Notification */}
-      {friendRequests.length > 0 && <span className="text-lg text-white">New Request!</span>}
+      {friendRequests.length > 0 && <span className="text-lg mt-2 text-white">New Request!</span>}
+     </div>
       
       {showFriendRequests && (
-        <div className="absolute w-[22vw] right-[-130%] mt-5 bg-gray-700 rounded-lg shadow-lg p-4 z-10">
-          <div className='w-full flex justify-between mb-2'>
+        <div className="absolute w-[22vw] -right-4/4  mt-1 bg-gray-700 rounded-lg shadow-lg p-4 z-10">
+          <div className='w-full  flex justify-between mb-2'>
             <h3 className="text-lg text-white">Pending Requests</h3>
             <img
               className='w-[5%] h-[7%] cursor-pointer'
@@ -136,7 +137,7 @@ const Head = () => {
               friendRequests.map((request) => (
                 <li
                   key={request._id}
-                  className="flex items-center justify-between p-2 rounded-md bg-gray-900 text-gray-300 mb-2"
+                  className="flex items-center  justify-between p-2 rounded-md bg-gray-900 text-gray-300 mb-2"
                 >
                   <div className='flex w-full h-full gap-2'>
                     <img className='bg-red-600 rounded-full w-[12.5%]' src={

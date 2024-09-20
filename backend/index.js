@@ -14,7 +14,14 @@ const searchRouter = require("./routes/searchRoutes");
 const db = require("./models/dbConfig");
 
 const app = express();
-app.use(cors());
+app.use(cors(
+    {
+        origin: process.env.CLIENT_URL,
+        credentials: true,
+        // allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Authorization'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE']
+    }
+));
 app.use(cookieParser());
 
 app.use(express.json()); 
@@ -38,7 +45,7 @@ app.use("/search", searchRouter);
  
 // app.use('/public/images/employeesDp', express.static(path.join(__dirname, 'public/images/employeesDp')));
 
-app.listen(process.env.PORT, ()=>{
+app.listen(process.env.PORT || 4001, ()=>{
     try{
         console.log(`Server is running at ${process.env.PORT}`);
     }

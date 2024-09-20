@@ -56,13 +56,15 @@ const Home = () => {
         toast.error('Error fetching data:', error);
       }
     };
+
+    if(currentFriendRequestStatus === "pending") {
+
+    }
     
     fetchData();
   }, []);
 
-  const handleSearch = (event) => {
-    setSearch(event.target.value);
-  };
+ 
 
   const handleAddFriend = async (friendId) => {
     try {
@@ -77,8 +79,9 @@ const Home = () => {
       } else {
         toast.error('Error sending friend request:', response.data.message);
       }
-
-      // setcurrentFriendReqStatus(response.data.currentFriendRequestStatus);
+      console.log(response.data.currentFriendRequestStatus)
+      
+      setcurrentFriendReqStatus(response.data.currentFriendRequestStatus);
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
         toast.error(error.response.data.error);
@@ -89,13 +92,17 @@ const Home = () => {
   };
 
   const isPending = (userId) => pendingRequests.includes(userId);
+  
+  const handleSearch = (event) => {
+    setSearch(event.target.value);
+  };
 
   const filteredUsers = users.filter(user =>
     user.username.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="w-screen h-screen bg-gray-900 text-white flex flex-col items-center">
+    <div className="w-screen h-full min-h-screen  bg-gray-900 text-white flex flex-col items-center">
       <Head />
       <main className="flex-1 w-[45%] max-w-7xl p-4 sm:p-6 lg:p-8">
         <div className="w-full space-y-8">
@@ -103,13 +110,14 @@ const Home = () => {
           {/* Search Bar */}
           <div className="w-full max-w-md mx-auto">
             <input
-              type="text"
-              value={search}
-              onChange={handleSearch}
-              className="w-full bg-gray-700 text-white rounded-lg p-3 outline-none"
-              placeholder="Search users..."
+                type="text"
+                value={search}
+                onChange={handleSearch}
+                className="w-full bg-gray-700 text-white rounded-lg p-3 outline-none"
+                placeholder="Search users..."
             />
-          </div>
+            </div>
+          
 
           {/* Friend Recommendations */}
           <div className="w-full">
@@ -163,9 +171,9 @@ const Home = () => {
               <div>
                 <p>No users are available right now.</p>
               </div>
-            ) : (
+             ) : ( 
               <ul className="space-y-4">
-                {filteredUsers.map(user => (
+                {users.map(user => (
                   <li
                     key={user._id}
                     className="bg-gray-800 p-4 rounded-lg flex flex-col sm:flex-row justify-between items-center"
@@ -198,7 +206,7 @@ const Home = () => {
                   </li>
                 ))}
               </ul>
-            )}
+             )}
           </div>
 
           {/* Friends List */}
@@ -228,6 +236,15 @@ const Home = () => {
               </ul>
             )}
           </div>
+
+
+
+
+
+
+
+
+
         </div>
       </main>
     </div>

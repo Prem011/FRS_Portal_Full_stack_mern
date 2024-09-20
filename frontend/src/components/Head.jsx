@@ -16,6 +16,7 @@ const Head = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [showFriendRequests, setShowFriendRequests] = useState(false);
 
 
   // localhost:5001/friend/friends/getFriendRequests
@@ -35,9 +36,10 @@ const Head = () => {
   
   useEffect(() => {
     // Fetch notifications (mock data for example)
+
     setNotifications([
       // { id: 1, message: 'Friend request from John Doe' },
-      { id: 2, message: 'Message from Jane Smith' },
+      // { id: 2, message: 'Message from Jane Smith' },
       // { id: 3, message: 'Reminder: Upcoming event' }
     ]);
 
@@ -48,12 +50,14 @@ const Head = () => {
     }
 
     const fetchFriendRequests = async () => {
-      const response = await axios.get('/api/friend/friends/getFriendRequests');
-      
+      var response = await axios.get('/api/friend/friends/getFriendRequests');
       setFriendRequests(response.data);
     }
     
     fetchFriendRequests();
+
+    const intervalId = setInterval(fetchFriendRequests, 7000);
+    return () => clearInterval(intervalId);
 
   }, [])
 
@@ -68,8 +72,8 @@ const Head = () => {
     }, 1500);
   };
 
-  
- 
+     
+    
  
 
   const handleLogout = async () => {
@@ -83,10 +87,11 @@ const Head = () => {
   };
 
   return (
-    <header className="w-full bg-gray-800 text-white px-4 py-2 md:px-8 flex items-center justify-between">
+    <header className="w-full fixed bg-gray-800 text-white px-4 py-2 md:px-8 flex items-center justify-between">
       {/* Logo and app name */}
       
       <div className="w-[80%] flex items-center space-x-6">
+
         <div className="w-full flex items-center space-x-4">
           <Link 
         to={"/"} 
@@ -103,66 +108,66 @@ const Head = () => {
         <p className='text-xs sm:text-sm md:text-base lg:text-sm font-semibold text-black px-2 pb-1'>
           Let's Connect
         </p>
-      </Link>
-
-
-    
+         </Link>
       
-          {friendRequests.length === 0 ? (
-            <div className="flex flex-col items-center">
-              <FaUserFriends size={40} />
-              <p className="text-sm text-gray-300">No Requests</p>
-            </div>
-          ) : (
-            <div className="relative" onMouseEnter={() => setModalOpen(true)} onClick={() => setModalOpen(false)}>
-              <div className="flex flex-col items-center">
-                <FaUserFriends size={40} />
-                <h1 className="text-lg text-white">New Request!</h1>
-                
-              </div>
+      <div
+      className='relative cursor-pointer'
+      onMouseEnter={() => setShowFriendRequests(true)}
+      onClick={() => setShowFriendRequests(false)}
+    >
+      <FaUserFriends size={40} />
       
-              {isModalOpen && (
-                <div className="absolute w-[22vw] max-h-[50vh] left-[-120%] top-[130%] bg-gray-700 rounded-lg shadow-lg p-4 z-20 overflow-y-scroll">
-                 
-                 <div className='flex justify-between mb-3' >
-                  <h2 className="text-lg text-white">Pending Requests</h2>
-                  <img className='w-[6%] h-[3%] cursor-pointer ' onClick={() => setModalOpen(false)} src="https://img.icons8.com/?size=100&id=83149&format=png&color=ffffff" alt="" />
-                 </div>
+      {/* Friend Request Notification */}
+      {friendRequests.length > 0 && <span className="text-lg text-white">New Request!</span>}
+      
+      {showFriendRequests && (
+        <div className="absolute w-[22vw] right-[-130%] mt-5 bg-gray-700 rounded-lg shadow-lg p-4 z-10">
+          <div className='w-full flex justify-between mb-2'>
+            <h3 className="text-lg text-white">Pending Requests</h3>
+            <img
+              className='w-[5%] h-[7%] cursor-pointer'
+              onClick={() => setShowFriendRequests(false)}
+              src="https://img.icons8.com/?size=100&id=83149&format=png&color=ffffff"
+              alt="Close"
+            />
+          </div>
+          <ul>
+            {friendRequests.length > 0 ? (
+              friendRequests.map((request) => (
+                <li
+                  key={request._id}
+                  className="flex items-center justify-between p-2 rounded-md bg-gray-900 text-gray-300 mb-2"
+                >
+                  <div className='flex w-full h-full gap-2'>
+                    <img className='bg-red-600 rounded-full w-[12.5%]' src={
+                      request.sender.avatar
+                      } alt="Avatar" />
+                    <p className='my-auto' >{request.sender.username}</p>
+                  </div>
 
-
-                 {friendRequests.map((request) => (
-                    <div 
-                      key={request._id} // Use a unique identifier here
-                      className="request-item flex items-center justify-between p-2 rounded-md bg-gray-900 text-gray-300 mb-2"
+                  <div className='flex gap-2'>
+                    <button
+                      onClick={() => handleAccept(request.sender._id)}
+                      className="bg-blue-500 p-1 rounded-md"
                     >
-                      <div className='flex w-full h-full gap-2'> 
-                        <img 
-                          className='bg-red-600 rounded-full w-[8.5%]' 
-                          src="" 
-                          alt="" 
-                        />
-                        <p>
-                          {request.sender.username}
-                        </p>
-                      </div>
-                      
-                      <div className='flex gap-2'>
-                        <button onClick={() => handleAccept(request.sender._id)} className="bg-blue-500 p-1 rounded-md">
-                          <FaCheck />
-                        </button>
-                        <button onClick={() => handleDecline(request.sender._id)} className="bg-red-500 p-1 rounded-md">
-                          <IoCloseSharp />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-
-                </div>
-              )}
-            </div>
-          )}
-      
-
+                      <FaCheck />
+                    </button>
+                    <button
+                      onClick={() => handleDecline(request.sender._id)}
+                      className="bg-red-500 p-1 rounded-md"
+                    >
+                      <IoCloseSharp />
+                    </button>
+                  </div>
+                </li>
+              ))
+            ) : (
+              <li className="text-sm text-gray-300">No friend requests</li>
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
 
         
       </div>
@@ -215,6 +220,8 @@ const Head = () => {
                 </ul>
               </div>
             )}
+
+            
           </div>
         </div>
 

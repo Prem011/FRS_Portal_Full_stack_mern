@@ -82,7 +82,7 @@ const Login = () => {
                     <Link to="/register">Doesn't have an Account? <br /><span className='text-blue-500' >Create New Account...</span></Link>
                     <button
                         type="submit"
-                        className='w-20 h-10 text-white rounded-md bg-white text-black hover:bg-zinc-300 border-0 p-2'
+                        className='w-20 h-10 text-black rounded-md bg-white hover:bg-zinc-300 border-0 p-2'
                     >
                         Login
                     </button>
